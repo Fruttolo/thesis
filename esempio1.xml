@@ -1,0 +1,8 @@
+<root>
+  <element attribute1="value">content</element>
+  <element attribute1="value">content</element>
+  <element2 attribute2="3">
+    <sub-element>content</sub-element>
+    <sub-element>content</sub-element>
+   </element>
+</root>

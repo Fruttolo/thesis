@@ -1,0 +1,100 @@
+% formato document
+\documentclass[12pt,a4paper,openright,twoside]{report}
+% import pacchetti lingua e enconding
+\usepackage[english,italian]{babel}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% code highlighting
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\algrenewcommand\algorithmicindent{1.0em}
+%%%%
+\usepackage{listings}
+\usepackage{minted}
+\definecolor{bg}{rgb}{.9,.9,.95}
+\usemintedstyle{trac}
+% utilit
+\usepackage{afterpage}
+% modifica numbering sezioni
+\usepackage{titlesec}
+%\renewcommand{\thesubsection}{}
+%\setcounter{secnumdepth}{2}
+% pacchetti ams
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{definition}{Definizione}
+\newtheorem{lemma}{Lemma}
+% esempi
+\theoremstyle{definition}
+%\newtheorem{example}{Esempio}[section]
+\newcounter{examp} 
+\setcounter{examp}{1}
+\newenvironment{example}[0]{\textbf{Esempio \arabic{examp}}}{\refstepcounter{examp}}
+% pacchetto tikz per disegnare i grafi
+\usepackage{subfig}
+\usepackage{caption}
+%\usepackage{subcaption}
+\usepackage{empheq}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+%renew captions
+%\renewcommand{\figurename}{Esempio}
+\usepackage[labelfont=bf,justification=justified,font=small,font+=it]{caption}
+%alberi
+\tikzset{
+  treenode/.style = {align=center, text centered,
+    font=\sffamily},
+  arn_n/.style = {treenode, circle, black, font=\sffamily\bfseries, draw=black,
+    fill=white},% arbre rouge noir, noeud noir
+}
+%immaginiiiiiii
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%
+%INIZIO DOCUMENTO%
+%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\begin{titlepage}
+\title{"XML Covering Index utilizzando la relazione di Simulazione}
+\date{\today}
+\author{Luca Casini\\Università degli studi di Perugia\\Corso di Laurea in Informatica}
+\end{titlepage}
+\maketitle
+\tableofcontents
+
+%\mainmatter
+%\pagestyle{headings}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CAPITOLO 1 - NOZIONI INTRODUTTIVE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chap1.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CAPITOLO 2 - CALCOLO DELLE SIMULAZIONE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chap2.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CAPITOLO 3 XML - EXTENSIBLE MARKUP LANGUAGE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chap3.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CAPITOLO 4 XML INDEXING % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chap4.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CAPITOLO 5 IMPLEMENTAZIONE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Implementazione}
+
+\end{document}

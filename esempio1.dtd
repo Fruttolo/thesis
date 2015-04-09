@@ -1,0 +1,7 @@
+<!ELEMENT element (#PCDATA)*>
+<!ELEMENT element2 (sub-element+)>
+<!ELEMENT sub-element (#PCDATA)>
+<!ATTLIST element
+	attribute1 CDATA #REQUIRED>
+<!ATTLIST element2
+	attribute2 CDATA #REQUIRED>

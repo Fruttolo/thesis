@@ -1,0 +1,419 @@
+\chapter{Nozioni Introduttive}
+Iniziamo introducendo alcune nozioni alla base di questa tesi: i \textbf{grafi}, strutture matematiche utilizzate nella rappresentazione dei documenti XML, e le relazioni di \textbf{Simulazione}, \textbf{Bisimulazione} e \textbf{Trace Equivalence}, relazioni binarie sui grafi che possono essere usate nella creazione di indici XML.
+
+\section{I Grafi}
+Introduciamo formalmente il concetto di grafo e le notazioni che utilizzeremo nel corso della tesi.
+\\\\
+I grafi sono strutture matematiche di grande importanza in molteplici campi scientifici. Un grafo è composto da un insieme di entità astratte chiamate \textbf{nodi} e un insieme di coppie di nodi, detti \textbf{archi}, che sono in relazione tra loro.\\
+Possiamo rappresentare graficamente un grafo come dei punti nello spazio, i nodi, connessi da delle linee, gli archi.
+
+\begin{definition}[Grafo]
+E' chiamato Grafo una coppia di insiemi $G = (N,E)$ dove $N$ è un insieme non vuoto di elementi detti nodi e $E \in N \times N $ è l'insieme degli elementi detti archi. Chiameremo $|N\,|$ \textbf{ordine} del grafo e $|E\,|$ \textbf{dimensione} del grafo.
+\end{definition}
+
+Se esiste in $E$ un insieme di archi che ci permette di raggiungere un nodo $v$ partendo da un altro nodo $u$ diremo che esiste un cammino tra i due nodi.
+
+\begin{definition}[Cammino]
+dati due nodi $u,v \in N$ esisterà un cammino $u ~ v$ di lunghezza $k$ se esiste una sequenza $<v_0,v_1,v_2,...,v_k>$ di vertici tale che la coppia $(v_(i-1),v_i) \in E$ per $i = 1,..,k$, con $u = v_0$ e $v = v_k$. 
+\end{definition}
+
+In base alle proprietà che verificano possiamo dividere i grafi nel seguente modo:
+
+\begin{itemize}
+\item un grafo può essere \textbf{finito o infinto} a seconda della cardinalità di $N$.
+\item un grafo si dice \textbf{etichettato} se ad ogni nodo e/o vertice è associata una etichetta di qualche tipo.
+\item un grafo è \textbf{aciclico} se e soltanto se non esiste un cammino che riporti al nodo di partenza, ossia $\not\exists u \in N: <u,u> \in E$.
+\item un grafo è detto \textbf{orientato} nel caso in cui gli archi abbiano un verso di percorrenza; un grafo semplice è non orientato ovvero $(u,v)\in E \implies (v,u) \in E$.
+\end{itemize}
+
+%\textcolor{red}{DEFINIZIONE DI COMPONENTI CONNESSE FORSE NON NECESSARIA?}
+
+\begin{definition}[Grafo fortemente connesso]
+Un grafo orientato è \textbf{fortemente connesso} se due vertici qualsiasi sono raggiungibili l'uno dall'altro, ovvero per ogni $ u, v \in \: N $, vale $ u \: \leadsto \: v $.
+\end{definition}
+
+\begin{definition}[Componente fortemente connessa]
+Una \textbf{componente fortemente connessa} di un grafo orientato $G$ è un sottografo massimale di $G$ fortemente connesso in cui esiste un cammino orientato tra ogni coppia di nodi ad esso appartenenti.
+\end{definition}
+Le componenti fortemente connesse formano una partizione di $G$ poiché un nodo non può trovarsi contemporaneamente in due componenti fortemente connesse, di conseguenza un grafo orientato è fortemente connesso se e solo se ha una sola componente connessa
+In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
+\begin{example} 
+\begin{figure}[H]
+\subfloat[Grafo ciclico non orientato]{
+\begin{tikzpicture}[>=stealth',shorten >=1pt,scale=.4,node distance=2cm,
+  thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
+  
+   \node[main node] (1) {1};
+  \node[main node] (2)[below right of=1] {2};
+  \node[main node] (5) [right of=2]{5};
+  \node[main node] (3) [below  of=2] {3};
+  \node[main node] (4) [right of=3] {4};
+  \node[main node] (6) [below right  of=5] {6};	  
+
+
+  \path[every node/.style={font=\sffamily\small}] 
+         (1) edge node [] {} (2)	  
+  		 (2) edge node [] {} (3)
+  		 	edge node [] {} (5)
+  		 (3) edge node [] {} (4) 			
+  		 (4) edge node [] {} (5)
+  		 edge node [] {} (6)
+  		 (5) edge node [] {} (6);
+\end{tikzpicture}}
+\qquad
+\subfloat[Grafo aciclico non orientato]{
+\begin{tikzpicture}[>=stealth',shorten >=1pt,scale=.4,node distance=2cm,
+  thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
+
+ %\tikzset{ container/.style={draw , ellipse , dashed , inner sep =0.1em}}
+  
+  \node[main node] (1) {1};
+  \node[main node] (5) [right of=1] {5};
+  \node[main node] (4) [below left of=5]{4};
+  \node[main node] (2) [below left of=1] {2};
+  \node[main node] (6) [below right of=4] {6};
+  \node[main node] (3) [below  of=2] {3};	  
+
+%\node[container , fit=(2) (4)] (b1) {};
+%\node at (b1.west) [left ,node distance=2 and 1] {B2: };
+  \path[every node/.style={font=\sffamily\small}] 
+         (1) edge node [] {} (2)	  
+  		 (2) edge node [] {} (4)
+  		 	edge node [] {} (3)
+  		 (4) edge node [] {} (5)
+  		 	edge node [] {} (6);
+\end{tikzpicture}}
+\caption{Grafi ciclici/aciclici non orientati etichettati sui nodi\label{fig:1}}
+\end{figure}
+\end{example}
+
+\begin{example}
+
+\begin{figure}[H]
+
+\centering%
+
+\subfloat[Grafo ciclico orientato che contiene il ciclo \{1,2,4,1\}]
+{
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+  thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
+  
+  \node[main node] (1) {1};
+  \node[main node] (2) [below left of=1] {2};
+  \node[main node] (3) [below right of=1] {3};
+  \node[main node] (4) [below right of=2] {4};
+  
+  \path[every node/.style={font=\sffamily\small}] 
+         (1) edge node [] {} (2)
+         	 edge node [] {} (3)
+         		  
+  		 (2) edge node [] {} (3)
+  		 	 edge node [] {} (4)
+  		 (4) edge node [] {} (1);
+  
+ \end{tikzpicture}
+
+}
+% 
+\qquad
+\subfloat[Grafo aciclico orientato]
+{
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+  thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
+  
+  \node[main node] (1) {1};
+  \node[main node] (2) [below left of=1] {2};
+  \node[main node] (3) [below right of=1] {3};
+  \node[main node] (4) [below right of=2] {4};
+  
+  \path[every node/.style={font=\sffamily\small}] 
+         (1) edge node [] {} (2)
+         	 edge node [] {} (3)
+         	 edge node [] {} (4)	  
+  		 (2) edge node [] {} (3)
+  		 	 edge node [] {} (4);
+ \end{tikzpicture}
+}
+%
+\caption{Grafi ciclici/aciclici orientati etichetatti sui nodi\label{fig:2}}
+
+\end{figure} 
+\end{example}
+
+\begin{example}
+
+\begin{figure}[H]
+  \centering
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+  thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
+  
+  \node[main node] (1) {1};
+  \node[main node] (2) [below left of=1] {2};
+  \node[main node] (3) [below right of=2] {3};
+  \node[main node] (4) [right of=1] {4};
+  \node[main node] (6) [below right of=4] {6};
+  \node[main node] (5) [below left of=6] {5};
+  
+  \path[every node/.style={font=\sffamily\small}] 
+         (1) edge node [] {} (3)
+         	 edge node [] {} (4)	  
+  		 (2) edge node [] {} (1)
+  		 (3) edge node [] {} (2)	
+  		 (4) edge node [] {} (5)
+  		 (5) edge node [] {} (6)
+  		 (6) edge node [] {} (4);
+  
+ \end{tikzpicture}
+\caption{Un grafo orientato con due componenti fortemente connesse \{1,2,3\} e \{4,5,6\} \label{fig:3}}
+\end{figure}
+\end{example}
+
+\newpage
+\subsection{Alberi}
+Questa tesi si occuperà di un tipo particolare di grafo detto \textbf{albero}. Un albero è un grafo aciclico che verifica certe proprietà; questo nome deriva dal fatto che, come un vero albero, possiede una radice da cui partono delle ramificazioni (sotto-alberi).
+\begin{definition}[Albero]
+Si dice albero un grafo $G$ che verifica una della seguenti condizioni equivalenti:
+\begin{itemize}
+\item $G$ è aciclico e connesso.
+\item aggiungere un arco a $G$ crea un ciclo.
+\item se si rimuovere un arco $G$ non è più connesso.
+\end{itemize}
+\end{definition}
+
+La struttura dati comunemente utilizzata in informatica è una tipologia di albero detto radicato \emph{radicato}, cioè un albero in cui un nodo viene scelto come radice.
+
+\begin{definition}
+Definiamo di seguito la radice e tutti i componenti dell'albero a partire da essa:\\
+\begin{description}
+\item[Radice:] La radice è il nodo di partenza. Tra la radice e qualsiasi nodo dell'albero c'è un percorso univoco (il senso del percorso è dato dall'orientamento dell'albero, generalmente è dalla radice al nodo).
+\item[Livello:] Il livello è dato dalla lunghezza del percorso dal nodo alla radice, la radice ha livello 0. Il livello massimo raggiunto è detto \textbf{altezza} dell'albero. I nodi allo stesso livello sono detti \textbf{cugini}.
+\item[Discendente/Antenato:] Dato un nodo i suoi discendenti sono tutti i nodi da esso raggiungibili allontanandosi dalla radice. Muovendoci verso la radice troveremo i suoi Antenati.
+\item[Figlio/Padre:] Dato un nodo i suoi figli sono i discendenti al livello inferiore. Il padre di un nodo è l'antenato al livello superiore. I nodi figli dello stesso padre si dicono \textbf{fratelli}.
+\item[Foglia:] Un nodo è una foglia se non ha figli. E,->,>=' anche detto \textbf{nodo esterno}.
+\end{description}
+\end{definition}
+%esempio albero
+\begin{example}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
+  level distance = 1.5cm}] 
+\node [arn_n] {1}
+    child{ node [arn_n] {2} 
+            child{ node [arn_n] {4} 
+            	child{ node [arn_n] {8}}							
+            }
+            child{ node [arn_n] {5}
+							child{ node [arn_n] {9}}
+            }                            
+    }
+    child{ node [arn_n] {3}
+            child{ node [arn_n] {6} 
+							child{ node [arn_n] {10}}
+							child{ node [arn_n] {11}}
+            }
+            child{ node [arn_n] {7}
+							child{ node [arn_n] {12}}
+            }
+		}
+; 
+\end{tikzpicture}
+\caption{Esempio di Albero}\label{fig:albero}
+\end{figure}
+Nella figura \ref{fig:albero} vediamo un esempio di albero. Il nodo 1 è la radice, i nodi 8,9,10,11,12 sono foglie al livello 3. Il nodo 3 è padre del nodo 6 e 7 e antenato di 6,7,10,11,12. 
+\end{example}
+
+
+\section{Simulazione, Bisimulazione e Trace Equivalence}
+In questa sezione introduciamo la relazione d'equivalenza detta simulazione e due relazione ad essa collegate: la bisimulazione e la trace equivalence.
+\\\\
+Le classi di equivalenza che costruiamo grazie a queste relazioni possono essere utilizzate per creare un grafo ridotto detto \textbf{grafo quoziente.}
+L'uso del grafo quoziente permette, a fronte di una perdita di informazione, di lavorare con strutture più piccole risparmiando tempo e risorse.
+
+\subsection{Simulazione}
+Iniziamo definendo formalmente la relazione di simulazione, in seguito illustreremo un esempio su un albero.
+
+\begin{definition}
+Sia $G = (V, E,A, \langle\langle.\rangle\rangle)$ un grafo etichettato dove: 
+\begin{itemize}
+\item $V$ è l'insieme dei vertici.
+\item $E \subseteq V^2$ è l'insieme dei cammini.
+\item $A$ è l'insieme delle etichette.
+\item $\langle\langle.\rangle\rangle:V \to A$ è una funzione che assegna ad ogni vertice $v$ la propria etichetta $\langle\langle v\rangle\rangle$.
+\end{itemize}
+Data la funzione $post(v) = \{u|(v,u) \in E\}$ che restituisce l'insieme dei successori del vertice $v$.
+Possiamo definire una relazione binaria $\preceq\;\subseteq V^2$ detta \emph{simulazione} se si verificano le seguenti condizioni:
+\begin{enumerate}
+\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
+\item $\forall u' \in post(u) \exists v' \in post(v) | u' \preceq v'$
+\end{enumerate}
+\begin{lemma}
+Due vertici $u$ e $v$ si dicono simili $u\approx^Sv$ se $u \preceq v$ e $v \preceq u$; la \emph{similarità} $\approx^S$ è una relazione di equivalenza.
+\end{lemma}
+\end{definition}
+\begin{flushleft}
+%figura simulazione
+\begin{example}
+\begin{figure}[H]
+\centering
+\subfloat[Grafo G]{
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+                    thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+
+  %\node[main node] (1) {/};
+  \node[main node] (2) [%below of=1,
+  label=right:5] {a};
+  \node[main node] (3) [below left of=2,label=right:4] {b};
+  \node[main node] (4) [below right of=2,label=right:6] {b};
+  \node[main node] (5) [below of=4,label=right:7] {c};
+  \node[main node] (6) [below of=5,label=right:8] {d};  
+  \node[main node] (7) [below of=3,label=right:3] {c};
+  \node[main node] (8) [below left of=3,label=right:1]{c};  
+  \node[main node] (9) [below of=7,label=right:2]{d};
+  
+  \path[every node/.style={font=\sffamily\small}]
+   % (1) edge node {} (2)
+    (2) edge node {} (3)
+        edge node {} (4)
+    (3) edge node {} (7)
+        edge node {} (8) 
+    (4) edge node {} (5)
+    (5) edge node {} (6)
+    (7) edge node {} (9)
+    (9) edge [loop left] node {} (9)
+    (6) edge [loop left] node {} (6);
+\end{tikzpicture}}
+\qquad
+\subfloat[Grafo $G/_{\simeq^S}$]{
+\begin{tikzpicture}[scale=1,->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+                    thick,main node/.style={scale=1,circle,draw,font=\sffamily\Large\bfseries}]
+
+  %\node[main node] (1) {/};
+  \node[main node] (2) [%below of=1,
+  label=right:5] {a};
+  \node[main node] (3) [below of=2,label=right:4 6] {b};
+  \node[main node] (4) [below left of=3,label=right:1] {c};
+  \node[main node] (5) [below right of=3,label=right:3 7] {c};
+  \node[main node] (6) [below of=5,label=right:2 8] {d};
+
+  \path[every node/.style={font=\sffamily\small}]
+    %(1) edge node {} (2)
+    (2) edge node {} (3)
+    (3) edge node {} (4)
+        edge node {} (5) 
+    (5) edge node {} (6)
+    (6) edge [loop left] node {} (6);
+\end{tikzpicture}}
+\caption{Esempio di Simulazione.\label{fig:simulaizone}}
+\end{figure}
+A sinistra abbiamo il grafo di partenza e a destra il grafo quoziente ricavato dalla relazione $\simeq^S$. Da notare come la cardinalità sia quasi dimezzata nel grafo quoziente.
+\end{example}
+\end{flushleft}
+\subsection{Bisimulazione}
+Definiamo ora la relazione di bisimulazione
+\begin{definition}
+Dati due vertici $u$ e $v$, $u \simeq v$ se:
+\begin{itemize}
+\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
+\item $\forall u' \in post(u) \exists v' \in post(v) | u' \simeq v'$
+\item $\forall v' \in post(v) \exists u' \in post(u) | v' \simeq u'$
+\end{itemize}
+Diremo quindi che $u$ bisimula $v$; se $u \simeq v$ e $v \simeq u$ allora si ha una relazione di \emph{bisimulazione} $\approx^B$.
+\end{definition}
+Il grafo quoziente $G/_{\approx^B}$ conserva un linguaggio più espressivo rispetto a quello ottenuto sfruttando la simulazione ma, essendo una relazione più fine, non fornisce una riduzione altrettanto importante in termini di spazio. Va notato come grazie all'algoritmo di Paige-Tarjan è possibile calcolare la bisimulazione in $O(mlogn)$.
+
+
+\subsection{Trace Equivalence}
+Illustriamo infine la trace equivalence, in figura possiamo vedere un confronto tra le due relazioni.
+\begin{definition}
+Dati due vertici $u$ e $v$, diciamo che $u$ domina $v$ se:
+\begin{itemize}
+\item definito $\bar{u}$ un cammino con radice in $u$
+\item $\forall\,\bar{u}\quad\exists\,\bar{v}\;|\;\langle\langle \bar{u} \rangle\rangle\,=\, \langle\langle \bar{v} \rangle\rangle$
+\end{itemize}TraceG
+La relazione di equivalenza $\approx^T$ è detta Trace Equivalence e vale se $u$ domina $v$ e $v$ domina $u$.
+\end{definition}
+\begin{lemma}
+La trace equivalence è implicata dalla simulazione ma non viceversa.
+\end{lemma}
+Questa relazione è molto importante perché due vertici equivalenti soddisfano le stesse formule di LTL e quindi il grafo quoziente $G/_{\approx^T}$ può essere usato per verificarle; tuttavia costituire questo grafo è molto difficile, il problema infatti è PSPACE-completo.\\\\
+\newpage
+\begin{example}
+\begin{figure}[H]
+\centering
+\subfloat[Grafo G]{
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+                    thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+
+\node[main node] (1) [label=right:1] {r};
+\node[main node] (2) [below left of=1,label=right:2] {a};
+\node[main node] (3) [below right of=1,label=right:3] {a};
+\node[main node] (4) [below of=2,label=right:4] {b};
+\node[main node] (5) [below right of=2,label=right:5] {b};
+\node[main node] (6) [below of=3,label=right:6] {b};
+\node[main node] (7) [below of=4,label=right:7] {c};
+\node[main node] (8) [below of=5,label=right:8] {c};
+\node[main node] (9) [below of=6,label=right:9] {d};
+
+\path[every node/.style={font=\sffamily\small}]
+(1) edge node {} (2)
+    edge node {} (3)
+(2) edge node {} (4) edge node {} (5)
+(3) edge node {} (6) edge node {} (5)
+(4) edge node {} (7)
+(5) edge node {} (8)
+(6) edge node {} (9)    
+(7) edge [loop left] node {} (7)
+(8) edge [loop left] node {} (8)
+(9) edge [loop left] node {} (9);
+\end{tikzpicture}
+}
+\subfloat[Grafo $G/_{\approx^B}$]{
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+                    thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+
+\node[main node] (1) [label=right:1] {r};
+\node[main node] (2) [below left of=1,label=right:2] {a};
+\node[main node] (3) [below right of=1,label=right:3] {a};
+%\node[main node] (4) [below left of=2,label=right:4] {b};
+\node[main node] (5) [below right of=2,label=right:4-5] {b};
+\node[main node] (6) [below of=3,label=right:7-8] {b};
+%\node[main node] (7) [below of=4,label=right:4] {c};
+\node[main node] (8) [below of=5,label=right:6] {c};
+\node[main node] (9) [below of=6,label=right:9] {d};
+
+\path[every node/.style={font=\sffamily\small}]
+(1) edge node {} (2)
+    edge node {} (3)
+(2) edge node {} (5)
+(3) edge node {} (6) edge node {} (5)
+%(4) edge node {} (7)
+(5) edge node {} (8)
+(6) edge node {} (9)    
+%(7) edge [loop left] node {} (7)
+(8) edge [loop left] node {} (8)
+(9) edge [loop left] node {} (9);
+\end{tikzpicture}
+}
+\subfloat[$G/_{\approx^T}$]{
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+                    thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+\node[main node] (1) [label=right:4] {r};
+\node[main node] (2) [below of=1,label=right:4] {a};
+\node[main node] (3) [below of=2,label=right:4] {b};
+\node[main node] (4) [below left of=3,label=right:4] {c};
+\node[main node] (5) [below right of=3,label=right:4] {d};
+
+\path[every node/.style={font=\sffamily\small}]
+(1) edge node {} (2)
+(2) edge node {} (3)
+(3) edge node {} (4) edge node {} (5)
+(4) edge [loop left] node {} (4)
+(5) edge [loop left] node {} (5);
+\end{tikzpicture}
+}
+\caption{Esempi di Trace Equivalence e Bisimulazione.\label{fig:bisim}}
+\end{figure}
+\end{example}
+A sinistra abbiamo un grafo G di partenza, al centro il grafo quoziente $G/_{\approx^B}$ e a destra il grafo quoziente $G/_{\approx^T}$. Notare come la Bisimulazione non ha grandi capacità di riduzione rispetto a trace equivalence e simulazione.
+
