@@ -53,8 +53,51 @@ Essere deterministico è contemporaneamente un vantaggio e uno svantaggio in qua
 DataGuide è in grado di fornire risposte precise e complete alle cosìdette path-query, cioè quelle query che presentano sono relazioni padre-figlio o antenato-discendente. Nel caso di query che coinvolgono anche i predicati (twig-query) la risposta ottenuta sarà completa ma non precisa e otterremo dei falsi positivi.\\\\
 \begin{example}
 \begin{figure}[H]
+\centering
 \includegraphics[scale=.5]{dataguide}
 \end{figure}
 \end{example}
 \section{Indici Basati sulla Bisimulazione}
+Vediamo due tipi di indici basati sulla simulazione: A(1)-index, in grado di coprire Path Queries, e F\&B-index, in grado di coprire anche le Twig Queries.
+Entrambi questi indici risultano poco efficienti nel caso in cui i dati siano molto grandi e irregolari per via dei requisiti stringenti della relazione di bisimulazione
+\subsection{1-index}
+Introdotto nell 1999 da Milo e Suciu questo indice è basato sulla relazione di Bisimulazione all'indietro (Backward Bisimiluation), questa relazione è uguale alla bisimulazione vista in precedenza con la differenza che conserva gli archi entranti invece di quelli uscenti. Di seguito una definizione formale.
+\begin{definition}[Backward Bisimulation]
+Dati due vertici $u$ e $v$, $u \simeq v$ se:
+\begin{itemize}
+\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
+\item $\forall u' \in pre(u) \exists v' \in pre(v) | u' \simeq v'$
+\item $\forall v' \in pre(v) \exists u' \in pre(u) | v' \simeq u'$
+\end{itemize}
+Diremo quindi che $u$ B-bisimula $v$; se $u \simeq v$ e $v \simeq u$ allora si ha una relazione di equivalenza che chiameremo \emph{backward-bisimulazione} $\approx^B$.
+\end{definition}
+1-index non è altro che il partizionamento del grafo di un documento XML secondo le classi di equivalenza della relazione di B-Bisimulazione. Per ottenere l'indice si può procedere invertendo gli archi del grafo e utilizzando un algoritmo che applica la definizione di F-bisimulazione vista nel capitolo introduttivo.\\\\
+Esistono anche delle versioni approssimate dell'algoritmo 1-index, dette A(k)-Index e D(k)-index. A(k)-index calcola la bisimulazione su percorsi entranti di lunghezza k, con k impostato manualmente, invece che fino alla radice, diminuendo la precisione ma aumentando la riduzione dello spazio.D(k)-index opera alla stessa maniera ma il valore di k viene impostato dinamicamente.\\\\
+\begin{example}
+\begin{figure}[H]
+\centering
+\subfloat{
+\includegraphics[scale=.3]{1-index.png}
+}
+\subfloat{
+\includegraphics[scale=.3]{a1-index.png}
+}
+\subfloat{
+\includegraphics[scale=.3]{a2-index.png}
+}
+\end{figure}
+\end{example}
+\subsection{F\&B-index}
+Sviluppato nel 2002 da Abiteboul, Buneman, et al. F\&B-index (Forward \& Backward Index) è un indice basato su bisimulazione in avanti e in indietro.\\
+Questa relazione è l'unione delle condizione di Forward-simulation e Backward-simulation e permette di conservare i tipi e i gli archi sia entranti che uscenti.\\
+A differenza degli indici visti in precedenza questo tipo indice è in grado di rispondere accuratamente anche a query ramificate. Kaushik, Bohannon, Naughton, e Korth (2002) hanno dimostrato che F\&B-index è l'indice più piccolo in grado di coprire le Branching Path Queries. Questo guadagno in versatilità viene però a discapito delle dimensioni dell'indice che sarà più grande per via della relazione d'equivalenza più esclusiva.
+\\\\
+Come per gli indici basati su B-bisimulazione anche per questo indice sono state proposte varianti approssimate, in particolare (F\&B)$^{k}$-index dove k è il parametro che gestisce l'approssimazione,e quindi le dimensioni, dell'indice in maniera affine a A(k)-index. Un altra variante dell'indice è pensata per distribuire i risultati su disco in modo da non riempire la memoria centrale, consentendo così di lavorare con documenti più grandi.\\\\
+\begin{example}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.4]{fb-index.png}
+\end{figure}
+\end{example}
+
 \section{Indici Basati sulla Simulazione}
