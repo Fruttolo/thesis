@@ -2,7 +2,7 @@
 Iniziamo introducendo alcune nozioni alla base di questa tesi: i \textbf{grafi}, strutture matematiche utilizzate nella rappresentazione dei documenti XML, e le relazioni di \textbf{Simulazione}, \textbf{Bisimulazione} e \textbf{Trace Equivalence}, relazioni binarie sui grafi che possono essere usate nella creazione di indici XML.
 
 \section{I Grafi}
-Introduciamo formalmente il concetto di grafo e le notazioni che utilizzeremo nel corso della tesi.
+Introduciamo formalmente il concetto di grafo e le relative notazioni che utilizzeremo nel corso della tesi.
 \\\\
 I grafi sono strutture matematiche di grande importanza in molteplici campi scientifici. Un grafo è composto da un insieme di entità astratte chiamate \textbf{nodi} e un insieme di coppie di nodi, detti \textbf{archi}, che sono in relazione tra loro.\\
 Possiamo rappresentare graficamente un grafo come dei punti nello spazio, i nodi, connessi da delle linee, gli archi.
@@ -11,13 +11,13 @@ Possiamo rappresentare graficamente un grafo come dei punti nello spazio, i nodi
 E' chiamato Grafo una coppia di insiemi $G = (N,E)$ dove $N$ è un insieme non vuoto di elementi detti nodi e $E \in N \times N $ è l'insieme degli elementi detti archi. Chiameremo $|N\,|$ \textbf{ordine} del grafo e $|E\,|$ \textbf{dimensione} del grafo.
 \end{definition}
 
-Se esiste in $E$ un insieme di archi che ci permette di raggiungere un nodo $v$ partendo da un altro nodo $u$ diremo che esiste un cammino tra i due nodi.
+Dati due nodi $u, v \in N$ in un grafo $G = (N,E)$ diremo che esiste un cammino da $u$ a $v$ se esiste in $E$ un insieme di archi che ci permette di raggiungere il nodo, formalmente:
 
 \begin{definition}[Cammino]
-dati due nodi $u,v \in N$ esisterà un cammino $u ~ v$ di lunghezza $k$ se esiste una sequenza $<v_0,v_1,v_2,...,v_k>$ di vertici tale che la coppia $(v_(i-1),v_i) \in E$ per $i = 1,..,k$, con $u = v_0$ e $v = v_k$. 
+dati due nodi $u,v \in N$ esisterà un cammino $u \~ v$ di lunghezza $k$ se esiste una sequenza $<v_0,v_1,v_2,...,v_k>$ di vertici tale che la coppia $(v_{(i-1)},v_i) \in E$ per $i = 1,..,k$, con $u = v_0$ e $v = v_k$. 
 \end{definition}
 
-In base alle proprietà che verificano possiamo dividere i grafi nel seguente modo:
+Possiamo dividere i grafi nel seguente modo in base alle proprietà che verificano :
 
 \begin{itemize}
 \item un grafo può essere \textbf{finito o infinto} a seconda della cardinalità di $N$.
