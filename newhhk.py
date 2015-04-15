@@ -21,9 +21,9 @@ class graph:
 
     def pre(self,node_index):
         p = []
-        for n in node_index:
+        for i in node_index:
             for e in self.edges:
-                if e[1]== n:
+                if e[1] == i:
                     p.append(e[0])
         return set(p)
 
@@ -48,20 +48,20 @@ def construct_tree(document):
     nodes = [n for n in root.iter()]
     c0 = 0
     for i,n in enumerate(nodes):
-        #print c0
+        print "construction " + str(c0)
         g.add_node(node(i, n.tag))
         try:
             p = nodes.index(n.getparent())
         except ValueError:
             p = None
         if p is not None:
-            g.add_edge((i,p))
             g.add_edge((p,i))
+            #g.add_edge((p,i))
         for c in n:
             #figli
             j = nodes.index(c)
             g.add_edge((i,j))
-            g.add_edge((j,i))
+            #g.add_edge((j,i))
         c0 += 1
     return g
 
@@ -69,6 +69,7 @@ def construct_tree(document):
 def naif(graph):
     sim = []
     for i,n in enumerate(graph.nodes):
+        print "starting " + str(i)
         sim.insert(i,set([m.num for m in graph.nodes if m.tag == n.tag]))
     flag = True
     c = 0
@@ -96,45 +97,63 @@ def efficient(graph):
     sim = []
     prevsim = []
     remove = []
-    print "starting"
     for i, n in enumerate(graph.nodes):
-        prevsim.insert(i, [t.num for t in graph.nodes])
-        if len(graph.post(n))==0:
+        print "starting " + str(i)
+        prevsim.insert(i, range(len(graph.nodes)))
+        if not graph.post(n):
             sim.insert(i, set([m.num for m in graph.nodes if m.tag == n.tag]))
         else:
-            sim.insert(i, set([m.num for m in graph.nodes if m.tag == n.tag and len(graph.post(n)) != 0]))
+            sim.insert(i, set([m.num for m in graph.nodes if m.tag == n.tag and graph.post(n)]))
+        print "remove " + str(i)
+        #print graph.edges
+        #print graph.pre(sim[i])
+        #print prevsim[i]
         remove.insert(i, graph.pre(prevsim[i]).difference(graph.pre(sim[i])))
+        #print remove[i]   
+
     # compute count(w'',u)
     print "counting"
     count = []
     for n in graph.nodes:
         count.insert(n.num,[])
         for m in graph.nodes:
+            print n.num, m.num
             c = len(graph.post(n.num).intersection(sim[m.num]))
             count[n.num].insert(m.num,c)
     #print count
     flag = True
+    c = 0
+    d = 0
     while flag:
-        print "while"
+        print "while " + str(c)
+        c += 1
         flag = False
         for v in graph.nodes:
-            print "for v"
-            for u in graph.pre([v.num]):
-                print "for u " + str(u)
-                for w in remove[v.num]:
-                    print "for w"
-                    if w in sim[u]:
-                        print "IF"
-                        sim[u].remove(w)
-                        for x in graph.pre([w]):
-                            print x
-                            if count[x][u] == 0:
-                                print "removing"
-                                remove[u].add(x)
-                                flag = True
-            prevsim[v.num] = sim[v.num]
-            remove[v.num].clear()
-    print sim
+            print "for v " + str(v.num)
+            if remove[v.num]:
+                for u in graph.pre([v.num]):
+                    #print "for u " + str(u)
+                    #print remove[v.num]
+                    for w in remove[v.num]:
+                        #print "for w"
+                        #print str(d)
+                        d += 1
+                        if w in sim[u]:
+                            print "IF"
+                            sim[u].remove(w)
+                            for x in graph.pre([w]):
+                                #print x
+                                if count[x][u] == 0:
+                                    print "removing"
+                                    remove[u].add(x)
+                                    count[x][u] -= 1
+                                    flag = True
+                prevsim[v.num] = sim[v.num]
+                remove[v.num].clear()
+    #print sim
     return sim
 
-efficient(construct_tree('./ciao.xml'))
+x = naif(construct_tree('ciao.xml'))
+y = efficient(construct_tree('ciao.xml'))
+
+print x == y
