@@ -4,17 +4,22 @@ Iniziamo introducendo alcune nozioni alla base di questa tesi: i \textbf{grafi},
 \section{I Grafi}
 Introduciamo formalmente il concetto di grafo e le relative notazioni che utilizzeremo nel corso della tesi.
 \\\\
-I grafi sono strutture matematiche di grande importanza in molteplici campi scientifici. Un grafo è composto da un insieme di entità astratte chiamate \textbf{nodi} e un insieme di coppie di nodi, detti \textbf{archi}, che sono in relazione tra loro.\\
+I grafi sono strutture matematiche di grande importanza per la modellazione di svariati problemi in molteplici campi scientifici. Un grafo è composto da un insieme di entità astratte chiamate \textbf{nodi} e un insieme di coppie di nodi, detti \textbf{archi}, che sono in relazione tra loro.\\
 Possiamo rappresentare graficamente un grafo come dei punti nello spazio, i nodi, connessi da delle linee, gli archi.
 
 \begin{definition}[Grafo]
-E' chiamato Grafo una coppia di insiemi $G = (N,E)$ dove $N$ è un insieme non vuoto di elementi detti nodi e $E \in N \times N $ è l'insieme degli elementi detti archi. Chiameremo $|N\,|$ \textbf{ordine} del grafo e $|E\,|$ \textbf{dimensione} del grafo.
+E' chiamato Grafo una coppia di insiemi $G = (N,E)$ dove $N$ è un insieme non vuoto di elementi detti nodi e $E \in N \times N $ è l'insieme degli elementi detti archi. Chiameremo $|N|$ \textbf{ordine} del grafo e $|E|$ \textbf{dimensione} del grafo.
 \end{definition}
 
 Dati due nodi $u, v \in N$ in un grafo $G = (N,E)$ diremo che esiste un cammino da $u$ a $v$ se esiste in $E$ un insieme di archi che ci permette di raggiungere il nodo, formalmente:
 
 \begin{definition}[Cammino]
-dati due nodi $u,v \in N$ esisterà un cammino $u \~ v$ di lunghezza $k$ se esiste una sequenza $<v_0,v_1,v_2,...,v_k>$ di vertici tale che la coppia $(v_{(i-1)},v_i) \in E$ per $i = 1,..,k$, con $u = v_0$ e $v = v_k$. 
+dati due nodi $u,v \in N$ esisterà un cammino $u \sim^k v$ di lunghezza $k$ se esiste una sequenza $<v_0,v_1,v_2,...,v_k>$ di vertici tale che la coppia $(v_{(i-1)},v_i) \in E$ per $i = 1,..,k$, con $u = v_0$ e $v = v_k$. 
+\end{definition}
+
+
+\begin{definition}[Ciclo]
+E' definito ciclo, in un grafo, un cammino che va da un nodo v in se se stesso, ovvero $v \sim v$
 \end{definition}
 
 Possiamo dividere i grafi nel seguente modo in base alle proprietà che verificano :
@@ -22,24 +27,25 @@ Possiamo dividere i grafi nel seguente modo in base alle proprietà che verifica
 \begin{itemize}
 \item un grafo può essere \textbf{finito o infinto} a seconda della cardinalità di $N$.
 \item un grafo si dice \textbf{etichettato} se ad ogni nodo e/o vertice è associata una etichetta di qualche tipo.
-\item un grafo è \textbf{aciclico} se e soltanto se non esiste un cammino che riporti al nodo di partenza, ossia $\not\exists u \in N: <u,u> \in E$.
+\item un grafo è \textbf{ciclico o aciclico} se contiene o meno cicli.
 \item un grafo è detto \textbf{orientato} nel caso in cui gli archi abbiano un verso di percorrenza; un grafo semplice è non orientato ovvero $(u,v)\in E \implies (v,u) \in E$.
 \end{itemize}
 
-%\textcolor{red}{DEFINIZIONE DI COMPONENTI CONNESSE FORSE NON NECESSARIA?}
-
 \begin{definition}[Grafo fortemente connesso]
-Un grafo orientato è \textbf{fortemente connesso} se due vertici qualsiasi sono raggiungibili l'uno dall'altro, ovvero per ogni $ u, v \in \: N $, vale $ u \: \leadsto \: v $.
+Un grafo orientato è \textbf{fortemente connesso} se due vertici qualsiasi sono raggiungibili l'uno dall'altro, ovvero $\forall u, v \in \: N $, vale $ u \sim v $.
 \end{definition}
 
 \begin{definition}[Componente fortemente connessa]
 Una \textbf{componente fortemente connessa} di un grafo orientato $G$ è un sottografo massimale di $G$ fortemente connesso in cui esiste un cammino orientato tra ogni coppia di nodi ad esso appartenenti.
 \end{definition}
-Le componenti fortemente connesse formano una partizione di $G$ poiché un nodo non può trovarsi contemporaneamente in due componenti fortemente connesse, di conseguenza un grafo orientato è fortemente connesso se e solo se ha una sola componente connessa
-In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
+Le componenti fortemente connesse formano una partizione di $G$ poiché un nodo non può trovarsi contemporaneamente in due componenti fortemente connesse, di conseguenza un grafo orientato è fortemente connesso se e solo se ha una sola componente connessa.
+\\\\
+In seguito illustriamo alcuni esempi con i vari tipi di grafi introdotti in questo paragrafo:
+\newpage
 \begin{example} 
-\begin{figure}[H]
-\subfloat[Grafo ciclico non orientato]{
+\begin{figure}[h]
+\centering
+\subfloat[]{
 \begin{tikzpicture}[>=stealth',shorten >=1pt,scale=.4,node distance=2cm,
   thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
   
@@ -61,7 +67,7 @@ In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
   		 (5) edge node [] {} (6);
 \end{tikzpicture}}
 \qquad
-\subfloat[Grafo aciclico non orientato]{
+\subfloat[]{
 \begin{tikzpicture}[>=stealth',shorten >=1pt,scale=.4,node distance=2cm,
   thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
 
@@ -83,17 +89,17 @@ In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
   		 (4) edge node [] {} (5)
   		 	edge node [] {} (6);
 \end{tikzpicture}}
-\caption{Grafi ciclici/aciclici non orientati etichettati sui nodi\label{fig:1}}
+\caption{\label{fig:1}}
 \end{figure}
+\begin{center}
+\textit{In figura \ref{fig:1} abbiamo due grafi non orientati etichettati sui nodi: il grafo (a) è ciclico, il grafo (b) è aciclico}
+\end{center}
 \end{example}
 
 \begin{example}
-
-\begin{figure}[H]
-
-\centering%
-
-\subfloat[Grafo ciclico orientato che contiene il ciclo \{1,2,4,1\}]
+\begin{figure}[h]
+\centering
+\subfloat[]
 {
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
   thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
@@ -114,9 +120,8 @@ In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
  \end{tikzpicture}
 
 }
-% 
 \qquad
-\subfloat[Grafo aciclico orientato]
+\subfloat[]
 {
    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
   thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
@@ -134,17 +139,19 @@ In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
   		 	 edge node [] {} (4);
  \end{tikzpicture}
 }
-%
-\caption{Grafi ciclici/aciclici orientati etichetatti sui nodi\label{fig:2}}
-
+\caption{\label{fig:2}}
 \end{figure} 
+\begin{center}
+\textit{In figura \ref{fig:2} abbiamo due grafi orientati etichettati sui nodi: il grafo (a) è ciclico, il grafo (b) è aciclico}
+\end{center}
 \end{example}
 
-\begin{example}
+\newpage
 
-\begin{figure}[H]
-  \centering
-   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+\begin{example}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
   thick,main node/.style={circle,fill=white,draw,font=\sffamily\Large\bfseries}]
   
   \node[main node] (1) {1};
@@ -163,14 +170,16 @@ In seguito illustriamo alcuni esempi con i vari tipi di grafi:\\\\
   		 (5) edge node [] {} (6)
   		 (6) edge node [] {} (4);
   
- \end{tikzpicture}
-\caption{Un grafo orientato con due componenti fortemente connesse \{1,2,3\} e \{4,5,6\} \label{fig:3}}
+\end{tikzpicture}
+\caption{\label{fig:3}}
 \end{figure}
+\begin{center}
+\textit{In figura \ref{fig:3} abbiamo un grafo orientato etichettato sui nodi con due componenti fortemente connesse \{1,2,3\} e \{4,5,6\}.}
+\end{center}
 \end{example}
 
-\newpage
 \subsection{Alberi}
-Questa tesi si occuperà di un tipo particolare di grafo detto \textbf{albero}. Un albero è un grafo aciclico che verifica certe proprietà; questo nome deriva dal fatto che, come un vero albero, possiede una radice da cui partono delle ramificazioni (sotto-alberi).
+Questa tesi si occuperà di un tipo particolare di grafo detto \textbf{albero}. Un albero è un grafo aciclico che verifica certe proprietà; questo nome deriva dal fatto che, fissato un nodo come radice, questo grafo può essere visto come un vero albero dalle cui radici partono varie ramificazioni (sotto-alberi).
 \begin{definition}[Albero]
 Si dice albero un grafo $G$ che verifica una della seguenti condizioni equivalenti:
 \begin{itemize}
@@ -184,14 +193,15 @@ La struttura dati comunemente utilizzata in informatica è una tipologia di albe
 
 \begin{definition}
 Definiamo di seguito la radice e tutti i componenti dell'albero a partire da essa:\\
-\begin{description}
-\item[Radice:] La radice è il nodo di partenza. Tra la radice e qualsiasi nodo dell'albero c'è un percorso univoco (il senso del percorso è dato dall'orientamento dell'albero, generalmente è dalla radice al nodo).
-\item[Livello:] Il livello è dato dalla lunghezza del percorso dal nodo alla radice, la radice ha livello 0. Il livello massimo raggiunto è detto \textbf{altezza} dell'albero. I nodi allo stesso livello sono detti \textbf{cugini}.
-\item[Discendente/Antenato:] Dato un nodo i suoi discendenti sono tutti i nodi da esso raggiungibili allontanandosi dalla radice. Muovendoci verso la radice troveremo i suoi Antenati.
-\item[Figlio/Padre:] Dato un nodo i suoi figli sono i discendenti al livello inferiore. Il padre di un nodo è l'antenato al livello superiore. I nodi figli dello stesso padre si dicono \textbf{fratelli}.
-\item[Foglia:] Un nodo è una foglia se non ha figli. E,->,>=' anche detto \textbf{nodo esterno}.
-\end{description}
+\begin{itemize}
+\item La \textbf{radice} è il nodo di partenza. Tra la radice e qualsiasi nodo dell'albero c'è un percorso univoco (il senso del percorso è dato dall'orientamento dell'albero, generalmente è dalla radice al nodo).
+\item Il \textbf{livello} è dato dalla lunghezza del percorso dal nodo alla radice, la radice ha livello 0. Il livello massimo raggiunto è detto \textbf{altezza} dell'albero. I nodi allo stesso livello sono detti \textbf{cugini}.
+\item Dato un nodo i suoi \textbf{discendenti} sono tutti i nodi da esso raggiungibili allontanandosi dalla radice. Muovendoci verso la radice troveremo i suoi \textbf{antenati}.
+\item Dato un nodo i suoi figli sono i \textbf{discendenti} al livello inferiore. Il \textbf{padre} di un nodo è l'antenato al livello superiore. I nodi figli dello stesso padre si dicono \textbf{fratelli}.
+\item Una \textbf{foglia} è un nodo senza figli. Tale nodo è anche detto \textbf{nodo esterno}.
+\end{itemize}
 \end{definition}
+Illustriamo di seguito la nozione di albero con un esempio.\\\\
 %esempio albero
 \begin{example}
 \begin{figure}[H]
@@ -220,39 +230,72 @@ Definiamo di seguito la radice e tutti i componenti dell'albero a partire da ess
 \end{tikzpicture}
 \caption{Esempio di Albero}\label{fig:albero}
 \end{figure}
-Nella figura \ref{fig:albero} vediamo un esempio di albero. Il nodo 1 è la radice, i nodi 8,9,10,11,12 sono foglie al livello 3. Il nodo 3 è padre del nodo 6 e 7 e antenato di 6,7,10,11,12. 
+\begin{center}
+\textit{Nella figura \ref{fig:albero} vediamo un esempio di albero. Il nodo 1 è la radice, i nodi 8,9,10,11,12 sono foglie al livello 3. Il nodo 3 è padre del nodo 6 e 7 e antenato di 6,7,10,11,12. 
+}
+\end{center}
 \end{example}
 
-
+\newpage
 \section{Simulazione, Bisimulazione e Trace Equivalence}
-In questa sezione introduciamo la relazione d'equivalenza detta simulazione e due relazione ad essa collegate: la bisimulazione e la trace equivalence.
+In questa sezione introduciamo la \textbf{simulazione}, una relazione d'equivalenza sull'insieme dei nodi di un grafo e due relazione ad essa collegate: la \textbf{bisimulazione} e la \textbf{trace equivalence}.
 \\\\
-Le classi di equivalenza che costruiamo grazie a queste relazioni possono essere utilizzate per creare un grafo ridotto detto \textbf{grafo quoziente.}
-L'uso del grafo quoziente permette, a fronte di una perdita di informazione, di lavorare con strutture più piccole risparmiando tempo e risorse.
+Le classi di equivalenza che costruiamo grazie a queste relazioni possono essere utilizzate per creare un grafo ridotto detto \textbf{grafo quoziente}, in cui intuitivamente i nodi simili vengono fusi in un unico nodo.\\
+L'uso del grafo quoziente permette, a fronte di una perdita di informazione, di lavorare con strutture più piccole risparmiando tempo e risorse.\\
+Tale perdita di  informazione è comunque controllata nel senso che i dati di interesse rispetto ad una classe specifica di linguaggi di interrogazione vengono preservati. Discuteremo di tali aspetti più avanti nella tesi.
 
 \subsection{Simulazione}
-Iniziamo definendo formalmente la relazione di simulazione, in seguito illustreremo un esempio su un albero.
+Iniziamo definendo formalmente la relazione di simulazione. In seguito illustreremo la nozione con diversi esempi.
 
-\begin{definition}
-Sia $G = (V, E,A, \langle\langle.\rangle\rangle)$ un grafo etichettato dove: 
-\begin{itemize}
-\item $V$ è l'insieme dei vertici.
-\item $E \subseteq V^2$ è l'insieme dei cammini.
-\item $A$ è l'insieme delle etichette.
-\item $\langle\langle.\rangle\rangle:V \to A$ è una funzione che assegna ad ogni vertice $v$ la propria etichetta $\langle\langle v\rangle\rangle$.
-\end{itemize}
-Data la funzione $post(v) = \{u|(v,u) \in E\}$ che restituisce l'insieme dei successori del vertice $v$.
-Possiamo definire una relazione binaria $\preceq\;\subseteq V^2$ detta \emph{simulazione} se si verificano le seguenti condizioni:
+\begin{definition}[Relazione di Simulazione]
+Sia $G = (N, E, \tau())$ un grafo etichettato dove con $\tau(v)$ indicheremo l'etichetta dei nel nodo v. Data la funzione $post(v) = \{u|(v,u) \in E\}$ che restituisce l'insieme dei successori del vertice $v$.
+Possiamo definire una relazione binaria $\preceq\;\subseteq N^2$ detta \textbf{relazione di simulazione} se si verificano le seguenti condizioni:
 \begin{enumerate}
-\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
-\item $\forall u' \in post(u) \exists v' \in post(v) | u' \preceq v'$
+\item $\tau(u) = \tau(v)$
+\item $\forall u' \in post(u) \exists v' \in post(v) | u' \preceq_S v'$
 \end{enumerate}
 \begin{lemma}
-Due vertici $u$ e $v$ si dicono simili $u\approx^Sv$ se $u \preceq v$ e $v \preceq u$; la \emph{similarità} $\approx^S$ è una relazione di equivalenza.
+Dato un grafo etichettato $G = (N,E,\tau())$ esiste un unica relazione di simulazione, denotata $\preceq_S$, massimo rispetto all'unione.
 \end{lemma}
 \end{definition}
-\begin{flushleft}
-%figura simulazione
+\begin{definition}[Equivalenza di Simulazione]
+Due vertici $u,v$ in grafo etichettato $G = (N,E)$ si dicono simili, denotato con $\equiv_S$, se $u\preceq_Sv$ e $v\preceq_Su$. La relazione $\equiv_S$ è una relazione di equivalenza sull'insieme $N$ dei nodi di $G$.
+\end{definition}
+
+\subsection{Bisimulazione}
+Definiamo ora la relazione di bisimulazione
+\begin{definition}[Relazione di Bisimulazione]
+Dati due vertici $u$ e $v$ in grafo $G = (N,E,\tau())$, $u \simeq v$ se:
+\begin{itemize}
+\item $\tau(u) = \tau(v)$
+\item $\forall\:u'\,\in\,post(u)\:\exists\:v'\,\in\,post(v)\,|\,u' \preceq_B v'$
+\item $\forall\:v'\,\in\,post(v)\:\exists\:u'\,\in\,post(u)\,|\,v' \preceq_B u'$
+\end{itemize}
+\begin{lemma}
+Dato un grafo etichettato $G = (N,E,\tau)$ esiste un unica relazione di bisimulazione, denotata $\preceq_B$, massimo rispetto all'unione.
+\end{lemma}
+\end{definition}
+\begin{definition}[Equivalenza di Bisimulazione]
+Due vertici $u,v$ in grafo etichettato $G = (N,E,\tau())$ si dicono bisimili, denotato con $\equiv_B$, se $u\preceq_Bv$ e $v\preceq_Bu$. La relazione $\equiv_B$ è una relazione di equivalenza sull'insieme $N$ dei nodi di $G$.
+\end{definition}
+
+
+\subsection{Trace Equivalence}
+Illustriamo infine la trace equivalence, in figura possiamo vedere un confronto tra le due relazioni.
+\begin{definition}
+Dati due vertici $u$ e $v$ in grafo $G = (N,E)$, diciamo che $u$ domina $v$ se:
+\begin{itemize}
+\item definito $\bar{u}$ un cammino con radice in $u$
+\item $\forall\,\bar{u}\quad\exists\,\bar{v}\;|\;\tau(\bar{u}) \,=\, \tau(\bar{v})$
+\end{itemize}
+La relazione di equivalenza $\equiv_T$ è detta Trace Equivalence e vale se $u$ domina $v$ e $v$ domina $u$.
+\end{definition}
+\begin{lemma}
+La trace equivalence è implicata dalla simulazione ma non viceversa.
+\end{lemma}
+Questa relazione è molto importante perché due vertici equivalenti soddisfano le stesse formule di LTL e quindi il grafo quoziente $G/_{\approx^T}$ può essere usato per verificarle; tuttavia costituire questo grafo è molto difficile, il problema infatti è PSPACE-completo.
+\\\\
+%%%aESEMPIOOOOOOOOOO
 \begin{example}
 \begin{figure}[H]
 \centering
@@ -284,7 +327,7 @@ Due vertici $u$ e $v$ si dicono simili $u\approx^Sv$ se $u \preceq v$ e $v \prec
     (6) edge [loop left] node {} (6);
 \end{tikzpicture}}
 \qquad
-\subfloat[Grafo $G/_{\simeq^S}$]{
+\subfloat[Grafo $G/_{\equiv_S}$]{
 \begin{tikzpicture}[scale=1,->,>=stealth',shorten >=1pt,auto,node distance=2cm,
                     thick,main node/.style={scale=1,circle,draw,font=\sffamily\Large\bfseries}]
 
@@ -306,38 +349,11 @@ Due vertici $u$ e $v$ si dicono simili $u\approx^Sv$ se $u \preceq v$ e $v \prec
 \end{tikzpicture}}
 \caption{Esempio di Simulazione.\label{fig:simulaizone}}
 \end{figure}
-A sinistra abbiamo il grafo di partenza e a destra il grafo quoziente ricavato dalla relazione $\simeq^S$. Da notare come la cardinalità sia quasi dimezzata nel grafo quoziente.
+\begin{center}
+\textit{A sinistra abbiamo il grafo di partenza e a destra il grafo quoziente ricavato dalla relazione $\equiv_S$. Da notare come la cardinalità sia quasi dimezzata nel grafo quoziente.}
+\end{center}
 \end{example}
-\end{flushleft}
-\subsection{Bisimulazione}
-Definiamo ora la relazione di bisimulazione
-\begin{definition}
-Dati due vertici $u$ e $v$, $u \simeq v$ se:
-\begin{itemize}
-\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
-\item $\forall u' \in post(u) \exists v' \in post(v) | u' \simeq v'$
-\item $\forall v' \in post(v) \exists u' \in post(u) | v' \simeq u'$
-\end{itemize}
-Diremo quindi che $u$ bisimula $v$; se $u \simeq v$ e $v \simeq u$ allora si ha una relazione di \emph{bisimulazione} $\approx^B$.
-\end{definition}
-Il grafo quoziente $G/_{\approx^B}$ conserva un linguaggio più espressivo rispetto a quello ottenuto sfruttando la simulazione ma, essendo una relazione più fine, non fornisce una riduzione altrettanto importante in termini di spazio. Va notato come grazie all'algoritmo di Paige-Tarjan è possibile calcolare la bisimulazione in $O(mlogn)$.
-
-
-\subsection{Trace Equivalence}
-Illustriamo infine la trace equivalence, in figura possiamo vedere un confronto tra le due relazioni.
-\begin{definition}
-Dati due vertici $u$ e $v$, diciamo che $u$ domina $v$ se:
-\begin{itemize}
-\item definito $\bar{u}$ un cammino con radice in $u$
-\item $\forall\,\bar{u}\quad\exists\,\bar{v}\;|\;\langle\langle \bar{u} \rangle\rangle\,=\, \langle\langle \bar{v} \rangle\rangle$
-\end{itemize}TraceG
-La relazione di equivalenza $\approx^T$ è detta Trace Equivalence e vale se $u$ domina $v$ e $v$ domina $u$.
-\end{definition}
-\begin{lemma}
-La trace equivalence è implicata dalla simulazione ma non viceversa.
-\end{lemma}
-Questa relazione è molto importante perché due vertici equivalenti soddisfano le stesse formule di LTL e quindi il grafo quoziente $G/_{\approx^T}$ può essere usato per verificarle; tuttavia costituire questo grafo è molto difficile, il problema infatti è PSPACE-completo.\\\\
-\newpage
+%ESAMPUIODSAAAAA
 \begin{example}
 \begin{figure}[H]
 \centering
@@ -414,6 +430,7 @@ Questa relazione è molto importante perché due vertici equivalenti soddisfano 
 }
 \caption{Esempi di Trace Equivalence e Bisimulazione.\label{fig:bisim}}
 \end{figure}
+\begin{center}
+\textit{A sinistra abbiamo un grafo G di partenza, al centro il grafo quoziente $G/_{\approx^B}$ e a destra il grafo quoziente $G/_{\approx^T}$. Notare come la Bisimulazione non ha grandi capacità di riduzione rispetto a trace equivalence e simulazione. Il grafo quoziente $G/_{\equiv_B}$ conserva un linguaggio più espressivo rispetto a quello ottenuto sfruttando la simulazione ma, essendo una relazione più fine, non fornisce una riduzione altrettanto importante in termini di spazio. Va notato come grazie all'algoritmo di Paige-Tarjan è possibile calcolare la bisimulazione in $O(mlogn)$.}
+\end{center}
 \end{example}
-A sinistra abbiamo un grafo G di partenza, al centro il grafo quoziente $G/_{\approx^B}$ e a destra il grafo quoziente $G/_{\approx^T}$. Notare come la Bisimulazione non ha grandi capacità di riduzione rispetto a trace equivalence e simulazione.
-

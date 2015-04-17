@@ -1,70 +1,39 @@
 \chapter{Calcolo della Simulazione}
-Negli anni sono stati proposti vari algoritmi per il calcolo della simulazione, più o meno efficienti. Questa tesi si basa sul lavoro di \textbf{M.Henzinger, T.Henzinger e P.Kopke} che nel 1995 hanno proposto degli algoritmi efficienti per il calcolo della simulazione su grafi finiti e infiniti.\\
+La relazione di simulazione trova applicazione in molti campi come la logica modale, la teoria della concorrenza, la teoria degli insiemi, la teoria degli automi, ecc. e sono vari gli algoritmi proposti per la sua computazione. Nel 1989 Bloom ha proposto un algoritmo con costo pari a $O(|N|^6|E|)$, successivamente sono apparse versioni più efficienti come quelle di Cleaveland e Steffen con costo $O(|N|^4|E|)$ e $=(|E|^2)$ rispettivamente nell'ambito dei sistemi concorrenti e del model-checking. Infine nel 1995, in maniera indipendente, Bloom e Paige, e M.Henzinger, T.Henzinger e P.Kopke, hanno sviluppato degli algoritmi che terminano in $O(|N||E|)$.
+Questa tesi si basa sul lavoro di \textbf{M.Henzinger, T.Henzinger e P.Kopke} sul calcolo della simulazione su grafi finiti e infiniti.\\
 L'algoritmo HHK, partendo da un implementazione naif del problema (che termina in $O(m^2n^3)$), viene rifinito in due passi fino a terminare in tempo $O(mn)$. Di seguito ne descriviamo il funzionamento e ne analizziamo complessità e correttezza. In figura viene mostrato lo pseudo-codice della versione più efficiente.
 \section{L'Algoritmo HHK}
-Nella sua versione Naif l'algoritmo costruisce un insieme $sim(v)$ per ogni nodo $v$ e poi confronta i successori di $v$ con i successori dei suoi simulatori effettuando una raffinamento di $sim(v)$. Quando non è più possibile raffinare il nessun insieme l'algoritmo termina.
+In questa sezione illustriamo l'algoritmo HHK per il calcolo della massima relazione di simulazione $\preceq_S$ su un grafo etichettato $G = (N,E)$. In particolare nella sezione \ref{sec:naif} introduciamo una prima versione naif dell'algoritmo con la relativa analisi di correttezza e complessità. Nella sezione
+\ref{sec:efficient} raffiniamo tale algoritmo fino ad ottenere una procedura efficiente di complessità $O(|E||V|)$. Tale  complessità viene raggiunta con un l'ausilio di opportune strutture dati
+\subsection{Versione Naif}
+\label{sec:naif}
+Nella sua versione Naif l'algoritmo costruisce inizialmente un insieme \texttt{sim(v)} per ogni nodo $v$. Dopo di che, preso un nodo $u$, un nodo $v \in \mathtt{post(u)}$ e un nodo $w \in \mathtt{sim(u)}$, se l'intersezione tra l'insieme dei successori di w \texttt{post(w)} e l'insieme dei simulatori di v \texttt{sim(v)} è vuota, si effettua un raffinamento di $sim(v)$ eliminando $w$. Quando non è più possibile raffinare nessun insieme l'algoritmo termina.
 \\\\
-L'algoritmo efficiente inizia con un ciclo \texttt{for} in cui si costituisce per ogni vertice $v \in V$: l'insieme $prevsim(v)$ che conterrà i simulatori canditati di $v$ nell'iterazione precedente e viene inizializzato uguale a $V$, $sim(v)$ che conterrà gli effettivi simulatori di $v$ e viene inizializzato con tutti i vertici che hanno la stessa etichetta di $v$, l'insieme $remove(v)$, contente i predecessori dei simulatori che sono stati eliminati, che verrà usato per raffinare l'insieme dei simulatori di ogni vertice.\\
-All'interno del \texttt{if} si fa uso della funzione $post(v)$ definita come $\{u|(v,u)\in\;E\}$, ossia l'insieme di tutti i successori di $v$.\\
-Nel ciclo \texttt{while} invece vengono presi in considerazione, in maniera non deterministica, tutti i vertici $v$ per cui $remove(v)\not=\emptyset$. Si controlla che i predecessori $u$ di $v$ non siano simulati da vertici $w \in remove(v)$, in caso contrario vengono rimossi dai simulatori di $u$. A fine ciclo viene aggiornato $prevsim(v)$ e viene svuotato $remove(v)$, il while termina quando $remove(v)=\emptyset$ per tutti i vertici del grafo.
-\subsection{Pseudocodice}
-Mostriamo di seguito lo pseudocodice della versione naif e della versione più raffinata dell'algoritmo HHK.
 \begin{algorithm}
 \caption{Naif HHK}
 \begin{algorithmic}[1]
 \ForAll{$v \in V$}
-    $sim(v) := \{u \in V|l(u)=l(v)\}$  
+    $sim(v) := \{u \in V|\tau(u)=\tau(v)\}$  
 \EndFor
 \While{there are three vertices $u, v, w$ such that\\
 $v \in post(u)$,\\
 $w \in sim(u)$,\\
 $post(w)\cap sim(v)=\emptyset$}
-\State $sim(u)\gets sim(u) \ \{w\}$
+\State $sim(u)\gets sim(u) \backslash \{w\}$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-
-\begin{algorithm}
-\caption{Efficent HHK}
-\begin{algorithmic}[1]
-\ForAll{$v \in V$}
-  \State $prevsim(v) \gets V$
-  \If{$post(v)=\emptyset$}
-    $sim(v) := \{u \in V|l(u)=l(v)\}$  
-  \Else{$\; sim(v) := \{u \in V|l(u) = l(v)\;\mathbf{and}\;post(u)\neq\emptyset\}$}
-  \EndIf
-  \State$remove(v):=pre(V)\setminus pre(sim(v))$
-\EndFor
-\While{there is a vertex $v \in V$ such that $remove(v)\neq\emptyset$}
-  \State{\textbf{Assert:}$\;\forall\;v \in V\;remove(v) = pre(prevsim(v))\setminus pre(sim(v))$}
-  \ForAll{$u \in pre(v)$}
-    \ForAll{$w \in remove(v)$}
-      \If{$w \in sim(v)$}
-        $sim(u)\gets sim(u)\setminus {w};$
-        \ForAll{$w'\in pre(w)$}
-          \If{$post(w')\cap sim(u)=\emptyset$}
-            $remove(u)\gets remove(u)\cup{w'}$
-          \EndIf
-        \EndFor
-      \EndIf
-    \EndFor  
-  \EndFor
-  \State{$prevsim(v):=sim(v)$}
-  \State{$remove(v):=\emptyset$}
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-\subsection{Correttezza e Complessità}
-La versione Naif ha un costo computazionale pari a $O(m^2 n^3)$, il costo è dominato dal ciclo \texttt{while}.
-\\\\
-L'algoritmo Efficent HHK termina in tempo $O(mn)$, la complessità si compone nel modo seguente: l'inizializzazione di $sim(v)$ richiede tempo $O(n^2)$(ricordiamo che $n \leq m$); l'inizializzazione di $remove(v)$ per ogni $v$ richiede tempo $O(mn)$.\\
-Dati due vertici v e w, se la condizione $w \in remove(v)$ è vera all' iterazione $i$ del ciclo \texttt{while} sarà allora falsa per ogni iterazione $j\geq i$.\\ Abbiamo infatti che:  
-(1)in tutte le iterazioni $w \in remove(v)$ implica che $w\not\in pre(sim(v))$.
-(2)il valore di $prevsim(v)$ nell'iterazione $j$ è un sottoinsieme di $sim(v)$ nell'iterazione $i$.
-(3)la condizione in \texttt{assert} all'inizio del ciclo \texttt{while}.
-Segue che il ciclo $\mathtt{for all}\;w \in remove(v)$ viene eseguito $\Sigma_v\Sigma_w(|pre(v)|=O(mn))$ volte.\\
-La condizione $w \in sim(u)$ è verificata al più una volta per ogni w e u, poiché se è vera per qualche w questo viene rimosso definitivamente da $sim(u)$. Per cui l'\texttt{if} più esterno all'interno del ciclo \texttt{while} contribuisce con un tempo $\Sigma_w\Sigma_u(1+|pre(v)|=O(mn))$. Così otteniamo un tempo totale di $O(mn)$.\\
-\subsection{Algoritmo in Azione}
+\subsubsection{Correttezza e Complessità}
+La versione Naif ha un costo computazionale pari a $O(|N|^3|E|^2)$, che si compone nel seguente modo:
+\begin{itemize}
+\item alla riga il ciclo \texttt{for} deve confrontare ogni coppia di nodi per creare gli insiemi dei simulatori. Questa operazione itera su tutti i nodi e costerà quindi $O(|N|)$
+\item alla riga 2 il ciclo \texttt{while} itera finché è vera la condizione alla riga 5, avremo un massimo di $|N|^2$ iterazioni.
+\item calcolare \texttt{post(u)} alla riga 3 significa iterare gli archi uscenti, il costo sarà $O(|E|)$.
+\item calcolare \texttt{sim(u)} alla riga 4 significa iterare sui nodi, il costo sarà $O(|N|)$.
+\item per calcolare l'intersezione alla riga 5 verifichiamo la presenza di ogni elemento  di \texttt{post(w)} in \texttt{sim(v)}. E' possibile farlo in tempo $O(|E|)$.
+\end{itemize}
+il tempo totale sarà $O(|N|^2 + |N|^2|E||N||E|) = O(|N|^3|E|^2)$
+\subsubsection{Algoritmo in Azione}
 Mostriamo come opera l'algoritmo nella sua versione naif con un esempio su un semplice grafo.\\\\
 \begin{example}
 \begin{figure}[H]
@@ -105,6 +74,7 @@ Mostriamo come opera l'algoritmo nella sua versione naif con un esempio su un se
 \caption{L'algoritmo HHK in azione.\label{fig:hhk}}
 \end{figure}
 \end{example}
+\textit{
 All'inizio l'algoritmo crea per ogni vertice un insieme contenente tutti i verti con la stessa etichetta avremo dunque:
 \begin{enumerate}
 \item $sim(1)$ = ${1,2}$
@@ -122,3 +92,50 @@ Nel nostro caso abbiamo:
 \end{enumerate}
 Partiamo con il nodo 3 e verifichiamo il suo simulatore 4, dall'algoritmo risulta che $post(4)\cap sim(1) = \{1,2\} \cap \{1,2\} = \not\emptyset$ quindi la simulazione è mantenuta.\\
 prendiamo il nodo 1 e il suo nodo simulatore 2, abbiamo che $post(2)\cap sim(1) = \emptyset\cap \{1,2\} = \emptyset$ per cui il nodo 2 viene eliminato dai simulatori di 1.
+}
+
+\subsection{Versione Efficiente}
+\label{sec:efficient}
+L'algoritmo efficiente inizia con un ciclo \texttt{for} in cui si costituisce per ogni vertice $v \in V$: l'insieme $prevsim(v)$ che conterrà i simulatori canditati di $v$ nell'iterazione precedente e viene inizializzato uguale a $V$, $sim(v)$ che conterrà gli effettivi simulatori di $v$ e viene inizializzato con tutti i vertici che hanno la stessa etichetta di $v$, l'insieme $remove(v)$, contente i predecessori dei simulatori che sono stati eliminati, che verrà usato per raffinare l'insieme dei simulatori di ogni vertice.\\
+All'interno del \texttt{if} si fa uso della funzione $post(v)$ definita come $\{u|(v,u)\in\;E\}$, ossia l'insieme di tutti i successori di $v$.\\
+Nel ciclo \texttt{while} invece vengono presi in considerazione, in maniera non deterministica, tutti i vertici $v$ per cui $remove(v)\not=\emptyset$. Si controlla che i predecessori $u$ di $v$ non siano simulati da vertici $w \in remove(v)$, in caso contrario vengono rimossi dai simulatori di $u$. A fine ciclo viene aggiornato $prevsim(v)$ e viene svuotato $remove(v)$, il while termina quando $remove(v)=\emptyset$ per tutti i vertici del grafo.
+
+\begin{algorithm}[H]
+\caption{Efficent HHK}
+\begin{algorithmic}[1]
+\ForAll{$v \in V$}
+  \State $prevsim(v) \gets V$
+  \If{$post(v)=\emptyset$}
+    $sim(v) := \{u \in V|l(u)=l(v)\}$  
+  \Else{$\; sim(v) := \{u \in V|l(u) = l(v)\;\mathbf{and}\;post(u)\neq\emptyset\}$}
+  \EndIf
+  \State$remove(v):=pre(V)\setminus pre(sim(v))$
+\EndFor
+\While{there is a vertex $v \in V$ such that $remove(v)\neq\emptyset$}
+  \State{\textbf{Assert:}$\;\forall\;v \in V\;remove(v) = pre(prevsim(v))\setminus pre(sim(v))$}
+  \ForAll{$u \in pre(v)$}
+    \ForAll{$w \in remove(v)$}
+      \If{$w \in sim(v)$}
+        $sim(u)\gets sim(u)\setminus {w};$
+        \ForAll{$w'\in pre(w)$}
+          \If{$post(w')\cap sim(u)=\emptyset$}
+            $remove(u)\gets remove(u)\cup{w'}$
+          \EndIf
+        \EndFor
+      \EndIf
+    \EndFor  
+  \EndFor
+  \State{$prevsim(v):=sim(v)$}
+  \State{$remove(v):=\emptyset$}
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+\subsubsection{Correttezza e Complessità}
+L'algoritmo Efficent HHK termina in tempo $O(mn)$, la complessità si compone nel modo seguente: l'inizializzazione di $sim(v)$ richiede tempo $O(n^2)$(ricordiamo che $n \leq m$); l'inizializzazione di $remove(v)$ per ogni $v$ richiede tempo $O(mn)$.\\
+Dati due vertici v e w, se la condizione $w \in remove(v)$ è vera all' iterazione $i$ del ciclo \texttt{while} sarà allora falsa per ogni iterazione $j\geq i$.\\ Abbiamo infatti che:  
+(1)in tutte le iterazioni $w \in remove(v)$ implica che $w\not\in pre(sim(v))$.
+(2)il valore di $prevsim(v)$ nell'iterazione $j$ è un sottoinsieme di $sim(v)$ nell'iterazione $i$.
+(3)la condizione in \texttt{assert} all'inizio del ciclo \texttt{while}.
+Segue che il ciclo $\mathtt{for all}\;w \in remove(v)$ viene eseguito $\Sigma_v\Sigma_w(|pre(v)|=O(mn))$ volte.\\
+La condizione $w \in sim(u)$ è verificata al più una volta per ogni w e u, poiché se è vera per qualche w questo viene rimosso definitivamente da $sim(u)$. Per cui l'\texttt{if} più esterno all'interno del ciclo \texttt{while} contribuisce con un tempo $\Sigma_w\Sigma_u(1+|pre(v)|=O(mn))$. Così otteniamo un tempo totale di $O(mn)$.\\
+\subsubsection{Algoritmo in Azione}

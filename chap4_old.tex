@@ -63,13 +63,13 @@ Entrambi questi indici risultano poco efficienti nel caso in cui i dati siano mo
 \subsection{1-index}
 Introdotto nell 1999 da Milo e Suciu questo indice è basato sulla relazione di Bisimulazione all'indietro (Backward Bisimiluation), questa relazione è uguale alla bisimulazione vista in precedenza con la differenza che conserva gli archi entranti invece di quelli uscenti. Di seguito una definizione formale.
 \begin{definition}[Backward Bisimulation]
-Dati due vertici $u$ e $v$, $u \preceq_Bb v$ se:
+Dati due vertici $u$ e $v$, $u \simeq v$ se:
 \begin{itemize}
-\item $\tau(u) = \tau(v)$
-\item $\forall u' \in pre(u) \exists v' \in pre(v) | u' \preceq_Bb v'$
-\item $\forall v' \in pre(v) \exists u' \in pre(u) | v' \preceq_Bb u'$
+\item $\langle\langle u \rangle\rangle = \langle\langle v \rangle\rangle$
+\item $\forall u' \in pre(u) \exists v' \in pre(v) | u' \simeq v'$
+\item $\forall v' \in pre(v) \exists u' \in pre(u) | v' \simeq u'$
 \end{itemize}
-Diremo quindi che $u$ B-bisimula $v$; se $u \preceq_Bb v$ e $v \preceq_Bb u$ allora si ha una relazione di equivalenza che chiameremo \emph{backward-bisimulazione} $\equiv_Bb$.
+Diremo quindi che $u$ B-bisimula $v$; se $u \simeq v$ e $v \simeq u$ allora si ha una relazione di equivalenza che chiameremo \emph{backward-bisimulazione} $\approx^B$.
 \end{definition}
 1-index non è altro che il partizionamento del grafo di un documento XML secondo le classi di equivalenza della relazione di B-Bisimulazione. Per ottenere l'indice si può procedere invertendo gli archi del grafo e utilizzando un algoritmo che applica la definizione di F-bisimulazione vista nel capitolo introduttivo.\\\\
 Esistono anche delle versioni approssimate dell'algoritmo 1-index, dette A(k)-Index e D(k)-index. A(k)-index calcola la bisimulazione su percorsi entranti di lunghezza k, con k impostato manualmente, invece che fino alla radice, diminuendo la precisione ma aumentando la riduzione dello spazio.D(k)-index opera alla stessa maniera ma il valore di k viene impostato dinamicamente.\\\\
@@ -101,24 +101,3 @@ Come per gli indici basati su B-bisimulazione anche per questo indice sono state
 \end{example}
 
 \section{Indici Basati sulla Simulazione}
-Gli indici basati sulla simulazione permettono di ottenere una considerevole riduzione delle dimensioni del grafo xml; la dimensione di questi indici, come illustrato da Ramanan, può infatti essere esponenzialmente inferiore in alcuni casi. Mentre gli indici basati sulla bisimulazione coprono le query appartenente alla classe delle $BPQ$, gli indici basati sulla simulazione coprono la classe $TPQ$ e la classe $BPQ^+$, cioè le $BPQ$ senza l’operatore booleano \texttt{or}. Gli indici basati sulla simulazione vengono derivati dall’algoritmo per il calcolo della F-simulazione sui grafi di Henzinger, Henzinger et al.
-Ramanan propone un indice basato su FB-Simulazione in grado di coprire le $BPQ^+$ e anche di valutare query $CXPath$ partendo da un documento xml comprensivo di archi \texttt{idref}.\\
-Definiamo la B-Simulazione:
-\begin{definition}[Backward Bisimulation]
-Dati due vertici $u$ e $v$, $u \preceq_Bs v$ se:
-\begin{itemize}
-\item $\tau(u) = \tau(v) $
-\item $\forall u' \in pre(u) \exists v' \in pre(v) | u' \preceq_Bs v'$
-\item $\forall v' \in pre(v) \exists u' \in pre(u) | v' \preceq_Bs u'$
-\end{itemize}
-Diremo quindi che $u$ B-simula $v$; se $u \preceq_Bs v$ e $v \preceq_Bs u$ allora si ha una relazione di equivalenza che chiameremo \emph{backward-bisimulazione} $\equiv^Bs$.\\
-La Forward-Backward simulazione (FB-simulazione) $\equiv_FBs$ sia ha al verificarsi delle condizioni di F-simulazione e B-simulazione.
-\end{definition}
-\\\\
-\begin{example}
-\begin{figure}[h]
-\includegraphics[scale=.5]{fbsim.png}
-\end{figure}
-\textit{In (a) abbiamo il documento di partenza che corrisponde anche al quoziente di FB-Bisimulazione. In (b) abbiamo l'indice basato su FB-simulazione. E' importante notare la notevole riduzione di dimensioni}
-\end{example}
-Kaneko e Zhu propongono un indice che sfrutta i database relazionali per sorpassare il problema della memoria centrale; questo indice copre solamente $TPQ$. Si costruisce una tabella relazionale dove viene indicato per ogni nodo il tag, la posizione con encoding beg-end, la posizione di un simulatore e un valore remove posto a 1 o 0. A ogni iterazione la tabella viene interrogata e aggiornata aggiungendo ai tempi di esecuzione il costo della query SQL ma permettendo di non avere in memoria tutti dati su cui si sa lavorando.
